@@ -5,7 +5,7 @@
 #include "ui_objects.h"
 #include "constants.h"
 #include "math.h"
-
+#include "touch_screen.h"
 
 
 
@@ -21,7 +21,15 @@ EaseInOut animation;
 
 void on_animation_callback(float value, void* ctx){
     
-    
+
+    if(!animation.uniform.is_running){
+        if (value == 0){
+            animation.start_transition();
+        }else{
+            animation.reverse_transition();
+        }
+    }
+
     
     float r = 100;
     float angle = value * 2 * PI; // value is betwen 0 - 2pi
@@ -31,16 +39,14 @@ void on_animation_callback(float value, void* ctx){
     float dy = cos(angle) * r;
 
 
-    test_object.moveTo(((RenderSystem::tft.width() - test_object.w) / 2 + dx), 
-                        (RenderSystem::tft.height() - test_object.h) / 2 - dy);
 
-    if(!animation.uniform.is_running){
-        if (value == 0){
-            animation.start_transition();
-        }else{
-            animation.reverse_transition();
-        }
+
+    if (test_object.isdragging){
+        return;
     }
+
+    test_object.move_to(((RenderSystem::tft.width() - test_object.w) / 2 + dx), 
+                        (RenderSystem::tft.height() - test_object.h) / 2 - dy);
 }
 
 
@@ -49,7 +55,8 @@ void setup() {
 
     Serial.begin(115200);
 
-    RenderSystem::setup();
+    RenderSystem::init();
+    TouchScreen::init();
 
     RenderSystem::objects[0] = &test_object;
 
@@ -74,5 +81,8 @@ void loop() {
 
     
     animation.update();
-    RenderSystem::update();
+
+
+    TouchScreen::loop();
+    RenderSystem::loop();
 }

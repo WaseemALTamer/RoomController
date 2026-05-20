@@ -14,12 +14,12 @@ namespace RenderSystem {
 
     extern uint32_t backgruond_color;
 
-    extern constexpr int TILE_SIZE = 32;
+    inline constexpr int TILE_SIZE = 32;
 
     extern TFT_eSprite* render_sprite_tile;
 
-    extern constexpr const int num_width_tiles = 15;
-    extern constexpr const int num_height_tiles = 10;
+    inline constexpr int num_width_tiles = 15;
+    inline constexpr int num_height_tiles = 10;
 
 
     struct Tile {
@@ -30,15 +30,15 @@ namespace RenderSystem {
 
     extern Tile screen_tiles[num_height_tiles][num_width_tiles];
 
-
-    extern Container* objects[15];
-    extern int objectCount;
+    inline constexpr int objectCount = 50;
+    inline Container* objects[objectCount];
+    
 
     uint16_t rgb888_to_rgb565(uint32_t c);
 
     void render();
-    void setup();
-    void update();
+    void init();
+    void loop();
 
 }
 

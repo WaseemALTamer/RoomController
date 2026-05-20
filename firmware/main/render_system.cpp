@@ -23,7 +23,7 @@ namespace RenderSystem{
     constexpr int TILE_SIZE = 32;
 
 
-    TFT_eSprite* render_sprite_tile;
+    TFT_eSprite render_sprite_tile = TFT_eSprite(&tft);
 
     // we flip the width with the height since we rotate the lcd
     const int num_width_tiles = 15;
@@ -57,7 +57,7 @@ namespace RenderSystem{
                     continue;
 
                 // 1. clear tile buffer
-                render_sprite_tile->fillSprite(rgb888_to_rgb565(backgruond_color)); // background color
+                render_sprite_tile.fillSprite(rgb888_to_rgb565(backgruond_color)); // background color
 
                 int tileX = tile.x_pos;
                 int tileY = tile.y_pos;
@@ -89,15 +89,12 @@ namespace RenderSystem{
                     int relative_pos_y = obj->y - tileY;
 
 
-                    obj->draw(render_sprite_tile, relative_pos_x, relative_pos_y);
+                    obj->draw(&render_sprite_tile, relative_pos_x, relative_pos_y);
                 }
 
-
-                
-
-                
+   
                 // 4. push tile to screen
-                render_sprite_tile->pushSprite(tileX, tileY);
+                render_sprite_tile.pushSprite(tileX, tileY);
 
                 // 5. mark clean
                 tile.is_dirty = false;
@@ -106,17 +103,18 @@ namespace RenderSystem{
     }
 
 
-
-    void setup(){
+    void init(){
         tft.init();
         tft.setRotation(3);
 
         tft.fillScreen(rgb888_to_rgb565(backgruond_color));
         tft.setSwapBytes(true);
 
-        render_sprite_tile = new TFT_eSprite(&tft);
-        render_sprite_tile->createSprite(TILE_SIZE, TILE_SIZE);
+        render_sprite_tile.setColorDepth(16);
+        render_sprite_tile.createSprite(TILE_SIZE, TILE_SIZE);
+        render_sprite_tile.fillSprite(rgb888_to_rgb565(backgruond_color));
 
+        
 
         
         for (int y = 0; y < num_height_tiles; y++) {
@@ -132,7 +130,7 @@ namespace RenderSystem{
     }
 
 
-    void update(){
+    void loop(){
         render();
     }
 
